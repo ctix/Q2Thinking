@@ -26,6 +26,14 @@ Knowledge distillation is a model compression technique where a smaller 'student
 \subsection{Teacher-Student Paradigm}
 The teacher model is typically a high-capacity model that has been trained on a large dataset. The student model has a significantly smaller architecture (fewer parameters, layers, etc.). The goal is for the student to learn not just the ground truth labels but also the nuanced output distribution of the teacher.
 
+\begin{figure}[h!]
+\centering
+% \includegraphics[width=0.8\textwidth]{teacher_student_diagram.png} % User should provide this image
+\fbox{\parbox{0.8\textwidth}{\centering Conceptual Diagram: Teacher-Student Distillation Setup. Shows teacher model providing soft labels (logits) to student model, which also learns from ground truth task labels (if available). Both models receive the same input data.}}
+\caption{Conceptual overview of the knowledge distillation process.}
+\label{fig:teacher_student}
+\end{figure}
+
 \subsection{Knowledge Transfer Mechanisms}
 \subsubsection{Soft Labels (Logits Distillation)}
 Instead of using hard labels (one-hot encoded ground truth) for training the student, distillation often uses the softened outputs (logits before softmax, or probabilities after softmax with temperature scaling) from the teacher model as targets. The teacher's logits provide richer information about inter-class similarities.
@@ -46,6 +54,14 @@ Individual weights are removed based on some criterion (e.g., magnitude). This c
 \paragraph{Magnitude Pruning:} Weights with absolute values below a certain threshold are set to zero. L1 regularization during training is a common way to encourage weights to become small, effectively pruning them. The L1 penalty added to the loss function is:
 $$ L_{L1} = \lambda \sum_i |\theta_i| $$
 where $\theta_i$ are the model parameters and $\lambda$ is the regularization strength.
+
+\begin{figure}[h!]
+\centering
+% \includegraphics[width=0.7\textwidth]{param_distribution.png} % User should provide this image
+\fbox{\parbox{0.7\textwidth}{\centering Example Plot: Model Parameter Distribution. Could show a histogram of weights before and after L1 pruning, with pruned model showing more weights near zero.}}
+\caption{Conceptual visualization of parameter distribution changes due to pruning using L1 regularization.}
+\label{fig:param_dist}
+\end{figure}
 
 \subsubsection{Structured Pruning}
 Entire neurons, channels, or layers are removed. This results in a smaller, dense model that can be run efficiently on standard hardware.
@@ -87,7 +103,87 @@ $$ L_{L1} = \lambda \sum_i |\theta_i| $$
 So the final training loss becomes:
 $$ L_{Final} = L_{Total} + L_{L1} $$
 
+\section{Code Walkthrough: \texttt{distill\_demo.py}}
+This section provides a walkthrough of the \texttt{distill\_demo.py} script, which implements the concepts of knowledge distillation and L1 regularization discussed previously.
+
+\subsection{Setup and Configuration}
+The script begins by defining key parameters:
+\begin{itemize}
+    \item \textbf{Model Names:} Specifies Hugging Face model identifiers for the teacher (e.g., \texttt{deepseek-ai/DeepSeek-R1-0528-Qwen3-8B}) and student (e.g., \texttt{google/gemma-2b-it}).
+    \item \textbf{Hyperparameters:}
+    \begin{itemize}
+        \item \texttt{temperature (T)}: Controls the softness of the teacher's output distribution (e.g., 4.0).
+        \item \texttt{alpha ($\alpha$)}: Balances the distillation loss and the student's task loss (e.g., 0.9).
+        \item \texttt{l1\_lambda ($\lambda$)}: The strength of the L1 regularization penalty (e.g., 1e-5).
+    \end{itemize}
+    \item \textbf{Device Setup:} Automatically selects CUDA if available, otherwise CPU, using \texttt{torch.device}.
+    \item \textbf{Dataset Parameters:} Defines the dataset name (e.g., \texttt{mlabonne/guanaco-llama2-1k}), a subset to use (e.g., \texttt{train[:100]}), max sequence length, and batch size.
+\end{itemize}
+
+\subsection{Model and Tokenizer Loading}
+\begin{itemize}
+    \item \textbf{Tokenizer:} The student model's tokenizer is loaded using \texttt{AutoTokenizer.from\_pretrained}. The script includes logic to handle cases where \texttt{pad\_token\_id} is not set by default (common for models like Gemma), typically by using the \texttt{eos\_token\_id} or adding a new pad token if necessary.
+    \item \textbf{Models:} Both teacher and student models are loaded using \texttt{AutoModelForCausalLM.from\_pretrained}. The teacher model is loaded with \texttt{trust\_remote\_code=True} as it might be required for certain architectures. Models are moved to the selected device. If the tokenizer's vocabulary was expanded (e.g., by adding a pad token), the student model's token embeddings are resized using \texttt{student\_model.resize\_token\_embeddings(len(tokenizer))}.
+\end{itemize}
+
+\subsection{Dataset Preparation (\texttt{DistillationDataset})}
+A custom PyTorch \texttt{Dataset} class, \texttt{DistillationDataset}, is defined:
+\begin{itemize}
+    \item \textbf{Initialization (\texttt{\_\_init\_\_})}: Takes the tokenizer, dataset name, split, and max length. It loads the raw dataset (e.g., from Hugging Face Hub) and extracts the text portions.
+    \item \textbf{Item Retrieval (\texttt{\_\_getitem\_\_})}:
+        \begin{enumerate}
+            \item Retrieves a text sample.
+            \item Tokenizes the text using the provided tokenizer with \texttt{max\_length}, \texttt{padding='max\_length'}, and \texttt{truncation=True}.
+            \item \texttt{input\_ids} are generated from the tokenized output.
+            \item \texttt{labels} are created by cloning \texttt{input\_ids}. In causal language modeling, the model learns to predict the next token, and this setup (where labels are identical to input ids) is standard. The model's internal mechanisms (like attention masks and shifting for Causal LMs) handle the "predict next token" objective.
+        \end{enumerate}
+    \item The \texttt{DataLoader} then uses this dataset to provide batches of data to the training loop.
+\end{itemize}
+
+\subsection{Distillation Training Loop}
+\begin{itemize}
+    \item \textbf{Model Modes:} The teacher model is set to evaluation mode (\texttt{teacher\_model.eval()}) as its weights are not updated. The student model is set to training mode (\texttt{student\_model.train()}).
+    \item \textbf{Iteration:} The script iterates through batches provided by the \texttt{DataLoader}. For each batch:
+        \begin{enumerate}
+            \item Input data (\texttt{input\_ids} and \texttt{labels}) is moved to the configured device.
+            \item \textbf{Teacher Logits:} Predictions from the teacher model are obtained within a \texttt{torch.no\_grad()} context to disable gradient calculations. This yields \texttt{teacher\_logits}.
+            \item \textbf{Student Logits:} Predictions from the student model are obtained, yielding \texttt{student\_logits}.
+        \end{enumerate}
+\end{itemize}
+
+\subsection{Loss Calculation}
+The core of the distillation process involves computing a composite loss:
+\begin{enumerate}
+    \item \textbf{Distillation Loss ($L_{Distill}$):}
+    Calculated using Kullback-Leibler divergence. The student's logits are passed through \texttt{F.log\_softmax(student\_logits / temperature, dim=-1)}, and the teacher's logits through \texttt{F.softmax(teacher\_logits / temperature, dim=-1)}. The result from \texttt{F.kl\_div} is then scaled by \texttt{temperature**2}. This corresponds to the $L_{Distill}$ formula discussed in Section 5.2.
+    \item \textbf{Student Task Loss ($L_{CE}$):}
+    Calculated using \texttt{F.cross\_entropy(student\_logits.view(-1, student\_logits.size(-1)), labels.view(-1))}. The logits and labels are reshaped to be 2D and 1D respectively. Padded tokens in the labels are ignored (typically by setting them to -100, which is the default \texttt{ignore\_index} for \texttt{CrossEntropyLoss} or by ensuring tokenizer's \texttt{pad\_token\_id} is used for this). This corresponds to the $L_{CE}$ formula in Section 5.1.
+    \item \textbf{Combined Loss ($L_{Total}$):}
+    The two losses are combined using the hyperparameter $\alpha$: \texttt{loss = alpha * loss\_distill + (1 - alpha) * loss\_student}. This matches the $L_{Total}$ formula in Section 5.3.
+    \item \textbf{L1 Regularization ($L_{L1}$):}
+    An L1 penalty is calculated by iterating through the student model's parameters (\texttt{param for param in student\_model.parameters() if param.requires\_grad}), summing their absolute values (\texttt{torch.abs(param).sum()}), and multiplying by \texttt{l1\_lambda}. This penalty is added to the combined loss: \texttt{loss += l1\_lambda * l1\_penalty}. This implements the $L_{L1}$ formula from Section 5.4.
+\end{enumerate}
+
+\begin{figure}[h!]
+\centering
+% \includegraphics[width=0.7\textwidth]{loss_curve.png} % User should provide this image
+\fbox{\parbox{0.7\textwidth}{\centering Example Plot: Training Loss Curve. Typically shows total loss, distillation loss, and task loss decreasing over training epochs/steps.}}
+\caption{Example of training loss curves during distillation.}
+\label{fig:loss_curve}
+\end{figure}
+
+\subsection{Optimization}
+Standard PyTorch optimization steps are performed:
+\begin{enumerate}
+    \item Gradients are cleared: \texttt{optimizer.zero\_grad()}.
+    \item Backpropagation is performed on the final loss: \texttt{loss.backward()}.
+    \item Optimizer updates the student model's weights: \texttt{optimizer.step()}.
+\end{enumerate}
+
+\subsection{Model Saving}
+After the training loop completes, the distilled student model and its tokenizer are saved to the specified output directory using \texttt{student\_model.save\_pretrained(output\_dir)} and \texttt{tokenizer.save\_pretrained(output\_dir)}.
+
 \section{Conclusion}
-Model distillation and pruning are powerful techniques for creating efficient models that retain significant capabilities of larger counterparts. By carefully selecting the student architecture, distillation objectives, pruning strategies, and loss functions, it's possible to achieve substantial compression while preserving performance on targeted tasks, as demonstrated by the goal of creating a specialized 1.5B parameter model for electronic technology design.
+Model distillation and pruning are powerful techniques for creating efficient models that retain significant capabilities of larger counterparts. By carefully selecting the student architecture, distillation objectives, pruning strategies, and loss functions, it's possible to achieve substantial compression while preserving performance on targeted tasks, as demonstrated by the goal of creating a specialized 1.5B parameter model for electronic technology design. The \texttt{distill\_demo.py} script provides a practical starting point for implementing these techniques.
 
 \end{document}
