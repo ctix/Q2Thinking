@@ -1,0 +1,594 @@
+\documentclass[12pt, a4paper]{report}
+
+% Preamble - Essential Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsfonts} % Mathematical symbols
+\usepackage{graphicx} % For images
+\usepackage{geometry}
+\geometry{a4paper, margin=1in} % Page layout
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=green} % Clickable links
+\usepackage{times} % Times New Roman font
+\usepackage{setspace}
+\onehalfspacing % 1.5 line spacing
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge} % Custom chapter formatting
+\usepackage{tocbibind} % To add ToC, LoF, LoT, Bibliography to ToC
+
+% Placeholder for bibliography package (e.g., natbib)
+% \usepackage{natbib}
+% \bibliographystyle{plainnat} % Example bibliography style
+
+% ----------------------------------------------------------------------
+% GENERAL GUIDANCE FOR USER
+% ----------------------------------------------------------------------
+% This LaTeX template provides a structured starting point for your thesis.
+% Key sections have been pre-filled with content based on previous discussions
+% regarding model distillation, pruning, and associated Python scripts.
+%
+% PLEASE PAY CLOSE ATTENTION TO THE FOLLOWING:
+% 1. SECTIONS REQUIRING YOUR INPUT: Throughout this document, you will find
+%    comments starting with "% TODO: User to ...". These mark places where
+%    you need to add your specific research, data, analysis, literature,
+%    and interpretations.
+%
+% 2. PLACEHOLDER CONTENT: Some sections, like parts of the Literature Review
+%    and Discussion, contain generated placeholder text to illustrate the
+%    expected content. This is NOT original research and MUST be replaced
+%    with your own work.
+%
+% 3. BIBLIOGRAPHY: The bibliography is set up to use a 'references.bib' file
+%    with the 'plain' style. You will need to create/populate 'references.bib'
+%    with your citations in BibTeX format. You might want to switch to
+%    'natbib' or 'biblatex' for more advanced citation management (see
+%    commented-out package examples in the preamble).
+%
+% 4. FIGURES AND TABLES: Placeholders for figures (\begin{figure}...\end{figure})
+%    and tables (\begin{table}...\end{table}) are provided. You need to
+%    create the actual image files (e.g., .png, .pdf) and update the
+%    \includegraphics commands, or fill in the table data. Remember to
+%    uncomment \listoffigures and \listoftables in the front matter if you use them.
+%    The \listoffigures command is currently active; \listoftables is commented.
+%
+% 5. CUSTOMIZATION: Feel free to customize the structure, formatting, and
+%    packages as needed for your specific university/institutional guidelines.
+%
+% Good luck with your thesis!
+% ----------------------------------------------------------------------
+
+% Title Page Information (Placeholders)
+\title{THESIS_TITLE_PLACEHOLDER \\ \large A Study on Model Compression via Distillation and Pruning for Efficient Deep Learning in Electronic Technology Design}
+\author{USER_NAME_PLACEHOLDER \\ Student ID: YOUR_ID_PLACEHOLDER \\ \texttt{user.email@example.com}}
+\date{MONTH_YEAR_PLACEHOLDER} % e.g., May 2024
+
+\begin{document}
+
+% Custom Title Page
+\begin{titlepage}
+    \centering
+    \vspace*{1.5cm} % Space from top
+
+    {\Huge \bfseries \the\title\par} % Main title
+
+    \vspace{2cm}
+
+    {\Large by\par}
+    \vspace{0.5cm}
+    {\Large \bfseries \the\author\par} % Author name and details
+
+    \vspace{2cm}
+
+    {\Large A thesis submitted in partial fulfillment of the requirements for the degree of\par}
+    \vspace{0.2cm}
+    {\Large YOUR_DEGREE_PLACEHOLDER (e.g., Master of Science in Engineering)\par} % Degree placeholder
+
+    \vspace{1.5cm}
+
+    {\Large Department of YOUR_DEPARTMENT_PLACEHOLDER\par} % Department placeholder
+    {\Large YOUR_UNIVERSITY_PLACEHOLDER\par} % University placeholder
+    {\Large City, Country\par} % University location placeholder
+
+    \vspace{2cm}
+
+    Supervised by: \\
+    \vspace{0.2cm}
+    {\Large SUPERVISOR_NAME_PLACEHOLDER\par} % Supervisor placeholder
+
+    \vfill % Pushes the date to the bottom
+
+    {\Large \the\date\par} % Date
+
+\end{titlepage}
+
+\pagenumbering{roman} % Roman numerals for front matter
+
+% Abstract
+\begin{abstract}
+\noindent This thesis explores the development of efficient neural network models through knowledge distillation and pruning. It details the methodology for compressing a large teacher model (e.g., DeepSeek-R1-0528-Qwen3-8B) into a smaller student model (e.g., gemma-2b-it), aiming to retain performance on specialized tasks such as electronic circuit design while significantly reducing parameter count. The work includes the implementation of a distillation pipeline with L1 regularization, tools for benchmarking on CS-Bench, and a process for fine-tuning the student model on a custom dataset. This document presents the theoretical background, implementation details (\texttt{distill\_demo.py}, \texttt{finetune\_student.py}, \texttt{benchmark\_csbench.py}), and a framework for evaluating the compressed model. Placeholder sections for detailed experimental results and discussion are provided for completion by the researcher. The goal is to provide a comprehensive guide and toolkit for creating and evaluating specialized, compressed language models.
+\end{abstract}
+
+% Keywords
+\noindent\textbf{Keywords:} Model Compression, Knowledge Distillation, Network Pruning, Deep Learning, Transformer Models, Student-Teacher Paradigm, L1 Regularization, Electronic Technology Design, Efficient AI, Fine-tuning, Benchmarking.
+
+\cleardoublepage % Ensure ToC starts on a new right-hand page
+
+% Table of Contents
+\tableofcontents
+\cleardoublepage
+
+% TODO: User to uncomment \listoffigures and \listoftables
+% if figures and tables are included in the thesis.
+% The \addcontentsline commands are usually handled by tocbibind if used,
+% ensuring they appear in the Table of Contents.
+
+% List of Figures (currently active as figures are included from explanation.tex)
+\listoffigures
+\cleardoublepage
+
+% List of Tables (optional, if tables are used)
+% \listoftables
+% \cleardoublepage
+
+% Start main content with Arabic page numbers
+\cleardoublepage
+\pagenumbering{arabic}
+
+% Chapters
+\chapter{Introduction}
+\label{chap:introduction}
+This chapter introduces the research topic of model compression in the context of large language models. It defines the problem of deploying computationally intensive models in resource-constrained environments, particularly for specialized domains like electronic technology design. The chapter outlines the primary objectives and scope of this thesis, and concludes with an overview of the document's structure.
+
+\section{Background on Model Compression}
+\label{sec:background_compression}
+Large-scale neural networks, while achieving state-of-the-art performance in various domains, often come with prohibitive computational demands and memory footprints. Model compression techniques aim to alleviate these issues. This document focuses on two such popular methods: knowledge distillation and network pruning. These methods are crucial for making advanced AI models more accessible and deployable across a wider range of applications.
+
+\section{Thesis Objectives and Scope}
+\label{sec:objectives_scope}
+This thesis aims to explore, implement, and evaluate model compression techniques, specifically knowledge distillation and L1 regularization-induced pruning, to create an efficient student model derived from a larger, more capable teacher model. The primary application focus is on generating a model that is proficient in tasks related to electronic technology design, demonstrating the viability of creating specialized, compact models.
+
+The scope of this work encompasses:
+\begin{itemize}
+    \item A review of relevant literature in model compression, distillation, and pruning.
+    \item The development of a comprehensive methodology for knowledge distillation, incorporating task-specific fine-tuning and L1 regularization.
+    \item The implementation of a software pipeline, including scripts for distillation (\texttt{distill\_demo.py}), custom dataset fine-tuning (\texttt{finetune\_student.py}), and benchmarking (\texttt{benchmark\_csbench.py}).
+    \item Establishing procedures for evaluating the student model's performance against the teacher model and a baseline student model, focusing on metrics such as exact match accuracy on relevant CS-Bench tasks and qualitative assessment of custom task performance.
+    \item Analyzing the trade-offs between model size reduction, computational efficiency, and task performance.
+\end{itemize}
+% TODO: User to refine objectives based on the specific experiments they will conduct.
+
+\section{Structure of the Thesis}
+\label{sec:thesis_structure}
+This thesis is organized into the following chapters:
+\begin{itemize}
+    \item \textbf{Chapter 1: Introduction} provides background on model compression, outlines the thesis objectives, scope, and structure.
+    \item \textbf{Chapter 2: Literature Review} discusses existing work in model compression, knowledge distillation, network pruning, and their applications.
+    \item \textbf{Chapter 3: Materials and Methods} details the models, datasets, software tools (\texttt{distill\_demo.py}, \texttt{finetune\_student.py}, \texttt{benchmark\_csbench.py}), and experimental procedures used in this research. This includes the mathematical principles behind the loss functions and the specifics of the distillation and fine-tuning processes.
+    \item \textbf{Chapter 4: Results} presents the findings from the benchmarking and evaluation of the teacher, baseline student, and distilled/fine-tuned student models. (User to populate with their experimental data).
+    \item \textbf{Chapter 5: Discussion} interprets the results, discusses their implications for creating specialized models in electronic technology design, and addresses the limitations of the study. (User to populate).
+    \item \textbf{Chapter 6: Conclusions} summarizes the key findings, contributions of the thesis, and suggests directions for future research.
+\end{itemize}
+
+\chapter{Literature Review}
+\label{chap:literature_review}
+% TODO: User to significantly expand this chapter with their comprehensive literature review.
+% The placeholder text below is very general and needs to be replaced with specific
+% scholarly sources, discussions of prior work, and identification of research gaps
+% that this thesis aims to address.
+This chapter reviews existing literature relevant to model compression, knowledge distillation, network pruning, and their applications, particularly in contexts similar to electronic technology design. It aims to provide a theoretical foundation for the methods adopted in this thesis and to position the current work within the broader field of efficient deep learning.
+
+\section{Overview of Model Compression}
+\label{sec:overview_model_compression}
+The demand for deploying large-scale deep learning models on devices with limited computational resources or in latency-sensitive applications has driven significant research into model compression. Common techniques include:
+\begin{itemize}
+    \item \textbf{Quantization:} Reducing the precision of model weights and activations (e.g., from 32-bit floating point to 8-bit integers).
+    \item \textbf{Network Pruning:} Removing redundant parameters or structural components from the network.
+    \item \textbf{Knowledge Distillation:} Training a smaller "student" model to mimic a larger "teacher" model.
+    \item \textbf{Neural Architecture Search (NAS):} Automatically discovering optimal model architectures for specific tasks and constraints.
+    \item \textbf{Low-Rank Factorization:} Decomposing large weight matrices into smaller matrices to reduce parameters.
+\end{itemize}
+This thesis focuses primarily on knowledge distillation and network pruning (specifically through L1 regularization).
+% TODO: User to expand with more details and possibly citations for each technique mentioned.
+
+\section{Knowledge Distillation In-Depth}
+\label{sec:kd_in_depth}
+Knowledge distillation, introduced by Hinton et al. (2015) in its modern form, leverages the idea that a well-trained teacher model's output distribution (soft labels) provides more information than hard labels alone. Variants of knowledge distillation include:
+\begin{itemize}
+    \item \textbf{Response-Based KD:} Matches the final output (logits or probabilities) of the student with the teacher. This is the primary approach used in this thesis.
+    \item \textbf{Feature-Based KD:} Trains the student to mimic intermediate layer representations of the teacher.
+    \item \textbf{Relation-Based KD:} Considers relationships between different layers or feature maps.
+\end{itemize}
+% TODO: User to add specific literature review on state-of-the-art distillation techniques and their applications relevant to their work. Consider mentioning other seminal works (e.g., Romero et al. on FitNets for feature-based KD) or recent advancements and comparative studies. Ensure proper citations are added to references.bib.
+
+\section{Network Pruning Techniques}
+\label{sec:pruning_techniques_review}
+Network pruning aims to reduce model complexity by eliminating unnecessary weights or structures. Key distinctions include:
+\begin{itemize}
+    \item \textbf{Unstructured Pruning:} Individual weights are removed, leading to sparse models that may require specialized hardware/software for efficiency gains. Magnitude-based pruning is a common example, often encouraged by L1 regularization as implemented in this thesis.
+    \item \textbf{Structured Pruning:} Entire neurons, channels, or even layers are removed, resulting in smaller, dense models that are easier to deploy on standard hardware.
+\end{itemize}
+Common criteria for pruning include weight magnitude, gradient information, or contributions to network activations or loss.
+% TODO: User to add review of recent pruning methods (e.g., Lottery Ticket Hypothesis, movement pruning), their effectiveness, and tools or libraries available. Cite relevant papers.
+
+\section{Applications in Specialized Domains}
+\label{sec:applications_specialized_domains}
+Model compression is particularly relevant for deploying models in resource-constrained environments (e.g., mobile devices, edge computing) or for specialized tasks where efficiency is paramount. For Natural Language Processing (NLP), compressed models are crucial for tasks in specific technical domains, such as the target area of "electronic circuit design." Creating smaller, yet knowledgeable, models can enable faster local processing, reduced costs, and privacy-preserving applications.
+% TODO: User to add literature specific to model compression for electronic design, NLP for technical domains, or similar relevant fields. Cite examples of compressed models used in industry or research for such applications.
+
+\chapter{Materials and Methods}
+\label{chap:methods}
+% TODO: User to ensure this chapter accurately reflects the final experimental design,
+% models, datasets, and procedures used. Specific version numbers for software/libraries
+% should be included in the "Experimental Setup" section of the Results chapter or here.
+This chapter will detail the methodologies used in the research, including:
+\begin{itemize}
+    \item The architecture of the teacher and student models.
+    \item The datasets used for training and evaluation (e.g., custom dataset for fine-tuning, CS-Bench for benchmarking).
+    \item The implementation details of the distillation process (loss functions, hyperparameters).
+    \item The pruning techniques applied (e.g., L1 regularization).
+    \item The evaluation metrics and benchmarking setup.
+\end{itemize}
+The \texttt{distill\_demo.py} and \texttt{benchmark\_csbench.py} scripts, along with the custom fine-tuning script \texttt{finetune\_student.py}, will be central to this chapter.
+
+\section{Knowledge Distillation}
+\label{sec:knowledge_distillation_methods}
+Knowledge distillation is a model compression technique where a smaller 'student' model is trained to mimic the behavior of a larger, pre-trained 'teacher' model. The core idea is to transfer the 'knowledge' learned by the teacher model to the student model.
+
+\subsection{Teacher-Student Paradigm}
+The teacher model is typically a high-capacity model that has been trained on a large dataset. The student model has a significantly smaller architecture (fewer parameters, layers, etc.). The goal is for the student to learn not just the ground truth labels but also the nuanced output distribution of the teacher.
+
+\begin{figure}[h!]
+\centering
+% \includegraphics[width=0.8\textwidth]{teacher_student_diagram.png} % User should provide this image and uncomment.
+\fbox{\parbox{0.8\textwidth}{\centering Conceptual Diagram: Teacher-Student Distillation Setup. Shows teacher model providing soft labels (logits) to student model, which also learns from ground truth task labels (if available). Both models receive the same input data.}}
+\caption{Conceptual overview of the knowledge distillation process.}
+\label{fig:teacher_student}
+\end{figure}
+
+\subsection{Knowledge Transfer Mechanisms}
+\subsubsection{Soft Labels (Logits Distillation)}
+Instead of using hard labels (one-hot encoded ground truth) for training the student, distillation often uses the softened outputs (logits before softmax, or probabilities after softmax with temperature scaling) from the teacher model as targets. The teacher's logits provide richer information about inter-class similarities.
+The distillation loss, often using Kullback-Leibler (KL) divergence, measures the difference between the teacher's and student's output distributions.
+The probability $p_i$ for a class $i$ is calculated using a softmax function with temperature $T$:
+$$ p_i = \frac{\exp(z_i / T)}{\sum_j \exp(z_j / T)} $$
+where $z_i$ are the logits. A higher temperature $T > 1$ softens the probability distribution, allowing the student to learn from smaller logit values.
+
+\subsubsection{Feature Distillation}
+Knowledge can also be transferred by encouraging the student model's intermediate layer representations (features) to be similar to those of the teacher model. This can help the student learn the teacher's internal reasoning process.
+
+\section{Network Pruning}
+\label{sec:network_pruning_methods}
+Network pruning aims to reduce model size by removing redundant or less important parameters, neurons, or even entire structural components from a trained network.
+
+\subsection{Types of Pruning}
+\subsubsection{Unstructured Pruning}
+Individual weights are removed based on some criterion (e.g., magnitude). This can lead to sparse weight matrices that require specialized hardware or libraries for efficient inference.
+\paragraph{Magnitude Pruning:} Weights with absolute values below a certain threshold are set to zero. L1 regularization during training is a common way to encourage weights to become small, effectively pruning them. The L1 penalty added to the loss function is:
+$$ L_{L1} = \lambda \sum_i |\theta_i| $$
+where $\theta_i$ are the model parameters and $\lambda$ is the regularization strength.
+
+\begin{figure}[h!]
+\centering
+% \includegraphics[width=0.7\textwidth]{param_distribution.png} % User should provide this image and uncomment.
+\fbox{\parbox{0.7\textwidth}{\centering Example Plot: Model Parameter Distribution. Could show a histogram of weights before and after L1 pruning, with pruned model showing more weights near zero.}}
+\caption{Conceptual visualization of parameter distribution changes due to pruning using L1 regularization.}
+\label{fig:param_dist}
+\end{figure}
+
+\subsubsection{Structured Pruning}
+Entire neurons, channels, or layers are removed. This results in a smaller, dense model that can be run efficiently on standard hardware.
+
+\subsection{Layer Freezing}
+A specific form of structured pruning or model adaptation where entire layers, particularly those deemed less relevant to the target task, are frozen (their weights are not updated during fine-tuning or distillation). This is common when adapting a large pre-trained model to a specific downstream task, preserving general knowledge in lower layers while specializing upper layers.
+
+\section{Lightweight Transformer Architecture}
+\label{sec:lightweight_architecture}
+For tasks like natural language understanding and generation, the student model is often a smaller version of the Transformer architecture.
+\begin{itemize}
+    \item \textbf{Reduced Layers:} Fewer encoder and/or decoder layers compared to the teacher.
+    \item \textbf{Smaller Hidden Dimensions:} Reduced size for embedding layers, feed-forward network hidden layers, and attention heads.
+    \item \textbf{Fewer Attention Heads:} A smaller number of attention heads in the multi-head attention mechanism.
+    \item \textbf{Shared Parameters:} Techniques like Albert (A Lite BERT) share parameters across layers to reduce redundancy.
+    \item \textbf{Alternative Architectures:} Models like DistilBERT, TinyBERT, or MobileBERT are designed specifically for efficiency. Gemma models also offer smaller variants (e.g., 2B parameters).
+\end{itemize}
+The goal is to maintain the core self-attention and feed-forward mechanisms of the Transformer while significantly reducing the parameter count to the desired target (e.g., ~1.5 billion parameters).
+
+\section{Mathematical Principles of Implemented Loss Functions}
+\label{sec:math_loss_functions}
+\subsection{Cross-Entropy Loss (Task Loss)}
+For classification or generation tasks, the student model is often trained on the actual task labels. The cross-entropy loss for a single data point is:
+$$ L_{CE} = - \sum_c y_c \log(p_c) $$
+where $y_c$ is the true probability (1 for the correct class, 0 otherwise for hard labels) and $p_c$ is the student model's predicted probability for class $c$. For language modeling, this is calculated over the vocabulary at each token position.
+
+\subsection{KL Divergence Loss (Distillation Loss)}
+This measures the difference between the probability distribution of the teacher ($P_T$) and the student ($P_S$), typically after applying temperature scaling to their logits.
+$$ L_{KD} = D_{KL}(P_T || P_S) = \sum_i P_T(i) \log\left(\frac{P_T(i)}{P_S(i)}\right) $$
+When using soft targets from the teacher (probabilities $q_i$) and student predictions ($p_i$), both derived with temperature $T$, the loss is often scaled by $T^2$:
+$$ L_{Distill} = (T^2) \times \sum_i q_i \log\left(\frac{q_i}{p_i}\right) $$
+
+\subsection{Combined Loss}
+The total loss function during distillation is typically a weighted sum of the task loss and the distillation loss:
+$$ L_{Total} = \alpha \cdot L_{Distill} + (1 - \alpha) \cdot L_{CE} $$
+where $\alpha$ is a hyperparameter balancing the two terms.
+
+\subsection{L1 Regularization Penalty (Pruning)}
+As mentioned earlier, the L1 penalty added to the total loss to encourage sparsity is:
+$$ L_{L1} = \lambda \sum_i |\theta_i| $$
+So the final training loss becomes:
+$$ L_{Final} = L_{Total} + L_{L1} $$
+
+\section{Implementation Details: \texttt{distill\_demo.py} Script}
+\label{sec:distill_demo_walkthrough}
+This section provides a walkthrough of the \texttt{distill\_demo.py} script, which implements the concepts of knowledge distillation and L1 regularization discussed previously.
+
+\subsection{Setup and Configuration}
+The script begins by defining key parameters:
+\begin{itemize}
+    \item \textbf{Model Names:} Specifies Hugging Face model identifiers for the teacher (e.g., \texttt{deepseek-ai/DeepSeek-R1-0528-Qwen3-8B}) and student (e.g., \texttt{google/gemma-2b-it}).
+    \item \textbf{Hyperparameters:}
+    \begin{itemize}
+        \item \texttt{temperature (T)}: Controls the softness of the teacher's output distribution (e.g., 4.0).
+        \item \texttt{alpha ($\alpha$)}: Balances the distillation loss and the student's task loss (e.g., 0.9).
+        \item \texttt{l1\_lambda ($\lambda$)}: The strength of the L1 regularization penalty (e.g., 1e-5).
+    \end{itemize}
+    \item \textbf{Device Setup:} Automatically selects CUDA if available, otherwise CPU, using \texttt{torch.device}.
+    \item \textbf{Dataset Parameters:} Defines the dataset name (e.g., \texttt{mlabonne/guanaco-llama2-1k}), a subset to use (e.g., \texttt{train[:100]}), max sequence length, and batch size.
+\end{itemize}
+
+\subsection{Model and Tokenizer Loading}
+\begin{itemize}
+    \item \textbf{Tokenizer:} The student model's tokenizer is loaded using \texttt{AutoTokenizer.from\_pretrained}. The script includes logic to handle cases where \texttt{pad\_token\_id} is not set by default (common for models like Gemma), typically by using the \texttt{eos\_token\_id} or adding a new pad token if necessary.
+    \item \textbf{Models:} Both teacher and student models are loaded using \texttt{AutoModelForCausalLM.from\_pretrained}. The teacher model is loaded with \texttt{trust\_remote\_code=True} as it might be required for certain architectures. Models are moved to the selected device. If the tokenizer's vocabulary was expanded (e.g., by adding a pad token), the student model's token embeddings are resized using \texttt{student\_model.resize\_token\_embeddings(len(tokenizer))}.
+\end{itemize}
+
+\subsection{Dataset Preparation (\texttt{DistillationDataset})}
+A custom PyTorch \texttt{Dataset} class, \texttt{DistillationDataset}, is defined:
+\begin{itemize}
+    \item \textbf{Initialization (\texttt{\_\_init\_\_})}: Takes the tokenizer, dataset name, split, and max length. It loads the raw dataset (e.g., from Hugging Face Hub) and extracts the text portions.
+    \item \textbf{Item Retrieval (\texttt{\_\_getitem\_\_})}:
+        \begin{enumerate}
+            \item Retrieves a text sample.
+            \item Tokenizes the text using the provided tokenizer with \texttt{max\_length}, \texttt{padding='max\_length'}, and \texttt{truncation=True}.
+            \item \texttt{input\_ids} are generated from the tokenized output.
+            \item \texttt{labels} are created by cloning \texttt{input\_ids}. In causal language modeling, the model learns to predict the next token, and this setup (where labels are identical to input ids) is standard. The model's internal mechanisms (like attention masks and shifting for Causal LMs) handle the "predict next token" objective.
+        \end{enumerate}
+    \item The \texttt{DataLoader} then uses this dataset to provide batches of data to the training loop.
+\end{itemize}
+
+\subsection{Distillation Training Loop}
+\begin{itemize}
+    \item \textbf{Model Modes:} The teacher model is set to evaluation mode (\texttt{teacher\_model.eval()}) as its weights are not updated. The student model is set to training mode (\texttt{student\_model.train()}).
+    \item \textbf{Iteration:} The script iterates through batches provided by the \texttt{DataLoader}. For each batch:
+        \begin{enumerate}
+            \item Input data (\texttt{input\_ids} and \texttt{labels}) is moved to the configured device.
+            \item \textbf{Teacher Logits:} Predictions from the teacher model are obtained within a \texttt{torch.no\_grad()} context to disable gradient calculations. This yields \texttt{teacher\_logits}.
+            \item \textbf{Student Logits:} Predictions from the student model are obtained, yielding \texttt{student\_logits}.
+        \end{enumerate}
+\end{itemize}
+
+\subsection{Loss Calculation}
+The core of the distillation process involves computing a composite loss:
+\begin{enumerate}
+    \item \textbf{Distillation Loss ($L_{Distill}$):}
+    Calculated using Kullback-Leibler divergence. The student's logits are passed through \texttt{F.log\_softmax(student\_logits / temperature, dim=-1)}, and the teacher's logits through \texttt{F.softmax(teacher\_logits / temperature, dim=-1)}. The result from \texttt{F.kl\_div} is then scaled by \texttt{temperature**2}. This corresponds to the $L_{Distill}$ formula discussed in Section \ref{sec:math_loss_functions}.
+    \item \textbf{Student Task Loss ($L_{CE}$):}
+    Calculated using \texttt{F.cross\_entropy(student\_logits.view(-1, student_logits.size(-1)), labels.view(-1))}. The logits and labels are reshaped to be 2D and 1D respectively. Padded tokens in the labels are ignored (typically by setting them to -100, which is the default \texttt{ignore\_index} for \texttt{CrossEntropyLoss} or by ensuring tokenizer's \texttt{pad\_token\_id} is used for this). This corresponds to the $L_{CE}$ formula in Section \ref{sec:math_loss_functions}.
+    \item \textbf{Combined Loss ($L_{Total}$):}
+    The two losses are combined using the hyperparameter $\alpha$: \texttt{loss = alpha * loss\_distill + (1 - alpha) * loss\_student}. This matches the $L_{Total}$ formula in Section \ref{sec:math_loss_functions}.
+    \item \textbf{L1 Regularization ($L_{L1}$):}
+    An L1 penalty is calculated by iterating through the student model's parameters (\texttt{param for param in student\_model.parameters() if param.requires\_grad}), summing their absolute values (\texttt{torch.abs(param).sum()}), and multiplying by \texttt{l1\_lambda}. This penalty is added to the combined loss: \texttt{loss += l1\_lambda * l1\_penalty}. This implements the $L_{L1}$ formula from Section \ref{sec:math_loss_functions}.
+\end{enumerate}
+
+\begin{figure}[h!]
+\centering
+% \includegraphics[width=0.7\textwidth]{loss_curve.png} % User should provide this image and uncomment.
+\fbox{\parbox{0.7\textwidth}{\centering Example Plot: Training Loss Curve. Typically shows total loss, distillation loss, and task loss decreasing over training epochs/steps.}}
+\caption{Example of training loss curves during distillation.}
+\label{fig:loss_curve}
+\end{figure}
+
+\subsection{Optimization}
+Standard PyTorch optimization steps are performed:
+\begin{enumerate}
+    \item Gradients are cleared: \texttt{optimizer.zero\_grad()}.
+    \item Backpropagation is performed on the final loss: \texttt{loss.backward()}.
+    \item Optimizer updates the student model's weights: \texttt{optimizer.step()}.
+\end{enumerate}
+
+\subsection{Model Saving}
+After the training loop completes, the distilled student model and its tokenizer are saved to the specified output directory using \texttt{student\_model.save\_pretrained(output\_dir)} and \texttt{tokenizer.save\_pretrained(output\_dir)}.
+
+
+\chapter{Results}
+\label{chap:results}
+% TODO: This chapter is CRITICAL and requires the user to input all their experimental data and findings.
+% The scripts (benchmark_csbench.py, finetune_student.py) are designed to help generate this data.
+% Be methodical in presenting results: state the experiment, the metric, and the outcome.
+% Use tables and figures (uncomment \includegraphics lines and provide image files) to visualize data.
+This chapter presents the empirical findings from the experiments conducted as part of this thesis. It details the performance of the various models (teacher, baseline student, distilled student, fine-tuned student) on the selected evaluation benchmarks and analyzes the effectiveness of the applied model compression techniques.
+
+\section{Experimental Setup}
+\label{sec:experimental_setup}
+% TODO: User to provide specific details of their experimental environment.
+% Example: "All experiments were conducted on a machine equipped with an NVIDIA RTX 4090 GPU with 24GB VRAM,
+% Intel Core i9-13900K CPU, and 64GB DDR5 RAM. Software versions include Python 3.10.9, PyTorch 2.1.0,
+% Transformers 4.35.2, and Datasets 2.14.5."
+This section outlines the environment and parameters used for conducting the experiments.
+\begin{itemize}
+    \item \textbf{Hardware:} % TODO: User to specify CPU, GPU (e.g., NVIDIA A100, V100), RAM.
+    \item \textbf{Software:} % TODO: User to specify Python version (e.g., 3.10), PyTorch version (e.g., 2.1), Transformers library version (e.g., 4.35).
+    \item \textbf{Datasets:}
+        \begin{itemize}
+            \item For general distillation: % TODO: User to confirm dataset and split used in distill_demo.py (e.g., subset of `mlabonne/guanaco-llama2-1k`).
+            \item For fine-tuning: % TODO: User to describe the `electronic_circuit_questions.jsonl` dataset – its final source, size (e.g., 500 samples), and nature of questions. If a train/validation split was made, describe it.
+            \item For benchmarking: % TODO: User to specify the exact CS-Bench task files used (e.g., `csbench_repo/assertion/assertion_definition_multiple_choice.jsonl`). List all tasks evaluated.
+        \end{itemize}
+    \item \textbf{Evaluation Metrics:} Primarily Exact Match (EM) for CS-Bench tasks, as implemented in \texttt{benchmark\_csbench.py}. For the fine-tuned model, qualitative examples of outputs for electronics-related prompts may also be presented. Model size (parameter count, on-disk size) is a key metric for compression.
+\end{itemize}
+
+\section{Teacher Model Baseline Performance}
+\label{sec:teacher_baseline}
+% TODO: User to run benchmark_csbench.py for the teacher model on all chosen CS-Bench tasks and populate this section.
+% Ensure results are clearly presented, likely in a table.
+The teacher model, \texttt{deepseek-ai/DeepSeek-R1-0528-Qwen3-8B}, was evaluated on selected tasks from the CS-Bench repository to establish a performance baseline. The results are summarized below.
+
+\subsection{Placeholder Table for Teacher Model Results}
+% TODO: User to fill this table with actual results from benchmark_csbench.py.
+% Add more rows for each CS-Bench task evaluated.
+% \begin{table}[h!]
+% \centering
+% \caption{Teacher Model (\texttt{deepseek-ai/DeepSeek-R1-0528-Qwen3-8B}) Performance on CS-Bench Tasks}
+% \label{tab:teacher_results}
+% \begin{tabular}{|l|c|c|} % Added a column for Task Name
+% \hline
+% CS-Bench Task File & Metric & Score \\
+% \hline
+% path/to/task_file1.jsonl & Exact Match & YOUR_SCORE_HERE \\
+% path/to/task_file2.jsonl & Exact Match & YOUR_SCORE_HERE \\
+% % ... more tasks ...
+% \hline
+% \end{tabular}
+% \end{table}
+\noindent Placeholder for teacher model performance table. User needs to run \texttt{benchmark\_csbench.py} for each relevant CS-Bench task and populate this, detailing which task corresponds to which score.
+
+\section{Student Model Performance Evaluation}
+\label{sec:student_performance}
+This section details the performance of the student model (\texttt{google/gemma-2b-it}) at various stages: before distillation (baseline), after distillation, and after fine-tuning on the custom dataset.
+
+\subsection{Baseline Student Model (Before Distillation)}
+\label{ssec:student_baseline}
+% TODO: User to run benchmark_csbench.py for the baseline student model on the same CS-Bench tasks and populate this section.
+The baseline student model, \texttt{google/gemma-2b-it}, was evaluated on the same CS-Bench tasks as the teacher model to provide a reference point before any compression techniques were applied.
+\noindent Placeholder for baseline student model performance table. User needs to run \texttt{benchmark\_csbench.py} and populate this, similar to the teacher model table.
+
+\subsection{Student Model After Distillation}
+\label{ssec:student_after_distillation}
+% TODO: User to run benchmark_csbench.py on the model saved by distill_demo.py.
+% Compare results with baseline student and teacher. Analyze parameter reduction (actual size on disk if possible) vs. performance trade-off.
+After the distillation process using \texttt{distill\_demo.py} (which included L1 regularization), the resulting student model was re-evaluated on the CS-Bench tasks.
+\noindent Placeholder for distilled student model performance table and analysis. Key aspects to discuss:
+\begin{itemize}
+    \item CS-Bench scores compared to baseline student and teacher.
+    \item Percentage of performance retained from teacher vs. percentage of parameters.
+    \item Parameter count of the distilled model (e.g., from Hugging Face model card or by summing parameters) and its size on disk.
+\end{itemize}
+
+\subsection{Student Model After Fine-tuning (on Custom Dataset)}
+\label{ssec:student_after_finetuning}
+% TODO: User to run finetune_student.py and then evaluate the fine-tuned model.
+% Evaluation could be on a held-out portion of electronic_circuit_questions.jsonl,
+% or qualitatively based on its performance on new electronics-related prompts.
+% If CS-Bench tasks are not relevant to electronics, this model might not be benchmarked there,
+% or if it is, results should be interpreted carefully.
+The distilled student model was further fine-tuned using \texttt{finetune\_student.py} on the custom `electronic_circuit_questions.jsonl` dataset to specialize its knowledge in electronic technology design.
+\noindent Placeholder for fine-tuned student model performance. Evaluation strategies:
+\begin{itemize}
+    \item If a test split of `electronic_circuit_questions.jsonl` was created: report metrics like perplexity or accuracy on this split.
+    \item Qualitative assessment: Provide examples of prompts related to electronics and the model's generated answers, comparing them to perhaps the distilled-only student or even the teacher.
+    \item If relevant CS-Bench tasks exist for electronics/circuits, evaluate there. Otherwise, acknowledge this model is specialized away from general CS tasks.
+\end{itemize}
+
+\section{Pruning Effects}
+\label{sec:pruning_effects}
+% TODO: User to discuss the impact of L1 regularization. This is qualitative unless specific tools
+% for measuring model sparsity or parameter histograms are used.
+% Refer to Figure \ref{fig:param_dist} and consider generating a real plot if possible.
+The L1 regularization applied during the distillation phase (in \texttt{distill\_demo.py}) is intended to induce sparsity in the student model's weights, effectively pruning less important connections by driving their values towards zero.
+\noindent Placeholder for discussion on pruning effects. Considerations:
+\begin{itemize}
+    \item While \texttt{distill\_demo.py} adds the L1 penalty, it doesn't automatically remove parameters. True physical pruning (removing zero-valued weights to reduce model size and potentially speed up inference) would require an additional step not covered by the script.
+    \item User could analyze the weight distribution of the saved student model (e.g., using PyTorch to load weights and plot histograms) to see if L1 regularization resulted in a higher concentration of weights near zero compared to the baseline student model. This would visually support the "pruning pressure." Refer to the placeholder Figure \ref{fig:param_dist}.
+\end{itemize}
+
+\chapter{Discussion}
+\label{chap:discussion}
+% TODO: This chapter requires the user to interpret their specific results from Chapter 4,
+% relate them to the literature, and discuss broader implications.
+This chapter provides an interpretation of the results presented in Chapter \ref{chap:results}, discusses their significance in the context of creating efficient models for specialized domains like electronic technology design, and addresses the limitations of the current study.
+
+\section{Analysis of Results}
+\label{sec:analysis_of_results}
+% TODO: User to provide a detailed interpretation of their findings.
+% - How close did the distilled student get to the teacher on CS-Bench?
+% - How much better was the distilled student than the baseline student?
+% - Did fine-tuning improve performance on electronics-related tasks (even if qualitative)?
+% - What was the final effective compression rate (parameters, disk size)?
+% - Were there any surprising results?
+A detailed comparison of the performance metrics (e.g., CS-Bench scores, qualitative assessments for custom tasks) between the teacher model, the baseline student model, the distilled student model, and the fine-tuned student model will be conducted here. The effectiveness of the knowledge distillation process in transferring knowledge while reducing parameters will be analyzed. The impact of fine-tuning on the custom `electronic_circuit_questions.jsonl` dataset on the student model's proficiency in the target domain will also be critically examined. The actual parameter count reduction and any observed efficiency gains (e.g., inference speed, if measured) will be discussed.
+
+\section{Implications of the Work}
+\label{sec:implications_of_work}
+% TODO: User to elaborate on the significance of their findings.
+% If successful, what does this mean for using LLMs in electronic design or similar fields?
+The development of a smaller, yet competent, language model specialized for electronic technology design carries several potential benefits. These include the possibility of deploying such models in environments with limited computational resources (e.g., on-device for EDA tools, embedded systems for diagnostic purposes), reduced inference latency for real-time applications, lower operational costs, and enhanced privacy if local deployment becomes feasible. This work demonstrates a pathway to achieving such specialized, efficient models.
+
+\section{Limitations of the Current Study}
+\label{sec:limitations_of_study}
+% TODO: User to reflect honestly on the limitations of their specific study.
+This study has several limitations that should be acknowledged:
+\begin{itemize}
+    \item The custom dataset for fine-tuning (`electronic_circuit_questions.jsonl`) is currently a placeholder and its size and quality will significantly impact the fine-tuning outcome. % User should update this based on their actual dataset.
+    \item The choice of teacher and student models, as well as hyperparameters for distillation and fine-tuning, were based on common practices but were not exhaustively optimized. Different choices might yield different results.
+    \item The evaluation on CS-Bench was limited to tasks selected by the user; a broader evaluation might yield different comparative insights or reveal weaknesses in other areas.
+    \item The current pruning approach (L1 regularization) is implicit. True physical pruning to reduce model size/latency was not implemented as a subsequent step.
+    \item Inference speed and detailed computational cost analysis were not part of the primary evaluation metrics for the scripts provided, though model size reduction is a proxy.
+    \item The evaluation of the fine-tuned model's specialized knowledge might be primarily qualitative if a dedicated test set for electronics questions is not available.
+\end{itemize}
+
+\section{Future Work}
+\label{sec:future_work_discussion}
+% TODO: User to suggest specific and actionable future work based on their results and limitations.
+Based on the findings and limitations of this study, several avenues for future research can be proposed:
+\begin{itemize}
+    \item Development and curation of a larger, high-quality, and more diverse dataset for electronic technology design to improve fine-tuning and enable robust quantitative evaluation of specialized knowledge.
+    \item Exploration of more advanced distillation techniques (e.g., feature-based distillation, intermediate layer matching, self-distillation).
+    \item Implementation and evaluation of structured pruning methods (e.g., filter pruning, layer removal) or iterative magnitude pruning with fine-tuning cycles to achieve actual model size reduction and potential speedups.
+    \item More extensive benchmarking across a wider range of CS-Bench tasks and other relevant NLP benchmarks, particularly those that might test reasoning in technical domains.
+    \item Quantitative analysis of inference speed, memory usage, and energy consumption of the compressed models on target hardware.
+    \item Investigation into quantization techniques (e.g., 8-bit, 4-bit) applied post-distillation/pruning for further compression.
+    \item Comparative studies with other student model architectures or sizes.
+\end{itemize}
+
+\chapter{Conclusions}
+\label{chap:conclusions_final}
+This thesis investigated model compression techniques, specifically knowledge distillation and L1 regularization-induced pruning, to develop a smaller, more efficient student model from a larger teacher model, with a focus on applications in electronic technology design. A comprehensive methodology was established, encompassing the selection of appropriate models, the design of the distillation process, strategies for fine-tuning on a custom domain-specific dataset, and procedures for benchmarking the performance of the resulting models (as detailed in Chapter \ref{chap:methods}).
+
+The study provided a suite of tools and implemented procedures for carrying out these steps, including the \texttt{distill\_demo.py} script for knowledge distillation and L1 regularization, the \texttt{finetune\_student.py} script for specialized dataset adaptation, and the \texttt{benchmark\_csbench.py} script for comparative evaluation against established benchmarks.
+
+% TODO: User to replace the following placeholder sentences with their actual key findings and conclusions
+% after conducting experiments and filling in the Results and Discussion chapters.
+While the full experimental results and their in-depth analysis are to be incorporated by the user based on their specific runs of these scripts (Chapter \ref{chap:results} and Chapter \ref{chap:discussion}), the framework itself demonstrates a viable and structured path towards creating efficient, specialized language models. Key findings based on the implemented framework are expected to show a trade-off between model size reduction and performance, with knowledge distillation effectively transferring capabilities from the teacher to the student, and fine-tuning further enhancing proficiency on domain-specific tasks. The L1 regularization is anticipated to contribute to model sparsity, paving the way for potential pruning.
+
+Future work, as outlined in Section \ref{sec:future_work_discussion}, could involve the development of larger custom datasets, exploration of more advanced compression techniques like structured pruning and quantization, more extensive benchmarking, and ultimately, the deployment of the optimized student model in real-world electronic design applications. This research provides a foundational toolkit and methodology for such endeavors.
+
+% Back Matter (Placeholders)
+\appendix
+\chapter{Supplemental Material (Example)}
+\label{app:supplemental}
+% TODO: User to add any supplemental materials here, or remove this appendix if not needed.
+% Examples: Detailed hyperparameter lists, full tables of results if too large for main text,
+% specific code snippets that are illustrative but not part of the main scripts.
+This appendix can contain supplemental information, such as extended data tables, code snippets (if not fully in text), or detailed configurations. Placeholder for content.
+
+% Bibliography
+\cleardoublepage
+% TODO: User to create a 'references.bib' file in the same directory
+% and add all citations in BibTeX format.
+% Example BibTeX entry:
+% @article{hinton2015distilling,
+%   title={Distilling the knowledge in a neural network},
+%   author={Hinton, Geoffrey and Vinyals, Oriol and Dean, Jeff},
+%   journal={arXiv preprint arXiv:1503.02531},
+%   year={2015}
+% }
+% Consider using a bibliography management tool (e.g., Zotero, Mendeley)
+% to export your .bib file.
+% You may also want to switch to natbib or biblatex for more control
+% over citation styles (see preamble for commented examples like \usepackage{natbib}).
+\bibliographystyle{plain} % Or \bibliographystyle{plainnat} if using natbib
+\bibliography{references} % Assumes references.bib file will be created later
+% To add "References" to the Table of Contents if not done automatically by tocbibind:
+% \addcontentsline{toc}{chapter}{References}
+
+\end{document}
