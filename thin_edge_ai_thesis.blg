@@ -1,0 +1,17 @@
+[0] Config.pm:307> INFO - This is Biber 2.19
+[0] Config.pm:310> INFO - Logfile is 'thin_edge_ai_thesis.blg'
+[171] biber:340> INFO - === Mon Jun 30, 2025, 05:52:47
+[209] Biber.pm:419> INFO - Reading 'thin_edge_ai_thesis.bcf'
+[353] Biber.pm:979> INFO - Found 1 citekeys in bib section 0
+[370] Biber.pm:4419> INFO - Processing section 0
+[392] Biber.pm:4610> INFO - Looking for bibtex file 'references.bib' for section 0
+[393] bibtex.pm:1713> INFO - LaTeX decoding ...
+[399] bibtex.pm:1519> INFO - Found BibTeX data source 'references.bib'
+[488] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[489] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[489] Biber.pm:4239> INFO - Sorting list 'nty/global//global/global' of type 'entry' with template 'nty' and locale 'en-US'
+[489] Biber.pm:4245> INFO - No sort tailoring available for locale 'en-US'
+[491] bbl.pm:660> INFO - Writing 'thin_edge_ai_thesis.bbl' with encoding 'UTF-8'
+[492] bbl.pm:763> INFO - Output to thin_edge_ai_thesis.bbl
+[492] Biber.pm:131> WARN - legacy year field 'Unknown' in entry 'mediatek_whitepaper' is not an integer - this will probably not sort properly.
+[492] Biber.pm:133> INFO - WARNINGS: 1

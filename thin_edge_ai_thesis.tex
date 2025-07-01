@@ -1,0 +1,39 @@
+\documentclass{article}
+% \usepackage[UTF8]{ctex} % Use ctex for Chinese characters - replaced by CJKutf8
+\usepackage{CJKutf8}
+\usepackage[backend=biber, style=numeric]{biblatex}
+\addbibresource{references.bib}
+\title{Thin-Edge AI：开启智能设备新纪元}
+\author{Your Name} % Replace with actual author if known, otherwise leave as placeholder
+\date{\today}
+
+\begin{document}
+\begin{CJK*}{UTF8}{gkai} % Start CJK environment with AR PL UKai
+\maketitle
+
+\begin{abstract}
+Thin-Edge AI（新锐概念）作为一种创新的轻量级 AI 部署模式，正逐渐崭露头角。这一概念的核心在于利用现有的消费电子设备，如智能手机，作为边缘节点，而非传统的专用边缘服务器。这种模式不仅降低了部署成本，还提高了系统的灵活性和可扩展性，使得 AI 技术能够更广泛地应用于各种场景。
+\end{abstract}
+
+\section{引言}
+在当今快速发展的科技时代，Thin-Edge AI（新锐概念）作为一种创新的轻量级 AI 部署模式，正逐渐崭露头角。这一概念的核心在于利用现有的消费电子设备，如智能手机，作为边缘节点，而非传统的专用边缘服务器。这种模式不仅降低了部署成本，还提高了系统的灵活性和可扩展性，使得 AI 技术能够更广泛地应用于各种场景。
+
+\section{Thin-Edge AI 技术框架}
+Thin-Edge AI 的技术框架可以概括为三个关键环节：Sense（感知）、Inference（推理）和 Augment（增强）。首先，Sense 阶段通过各种传感器（如扫地机的传感器、玩具麦克风等）采集数据，这些数据是 AI 系统运行的基础。接着，在 Inference 阶段，手机等消费电子设备运行轻量级的 AI 模型（如 7B 或 10B 模型），处理核心逻辑，实现快速响应和本地决策。最后，在 Augment 阶段，云端处理复杂的案例，并根据反馈更新模型，确保系统的持续优化和改进。
+
+\section{数据印证}
+这种模式的数据印证点在电子宠物场景中表现得尤为明显。根据联发科白皮书的数据~\cite{mediatek_whitepaper}，本地模型能够处理 92% 的常规交互，而仅有 17% 的查询需要云端协同。这一数据充分证明了 Thin-Edge AI 在处理日常任务时的高效性和自给自足能力，同时也展示了云端在处理复杂任务时的重要补充作用。
+
+\section{Thin-Edge AI 的创新之处}
+Thin-Edge AI 的创新之处在于将智能手机定位为“AI 能力中转站”，这一角色不仅充分利用了智能手机强大的计算能力和广泛的普及度，还为 AI 技术的广泛应用提供了新的思路。从开源大模型到专用小模型的转化路径，使得 AI 技术能够更好地适应不同的应用场景，提高了模型的实用性和效率。
+
+\section{技术趋势符合性}
+这种模式符合当前的“On-Device AI”（设备端 AI）和“Hybrid Cloud”（混合云）的技术趋势。设备端 AI 强调在本地设备上进行数据处理和决策，减少对云端的依赖，提高响应速度和数据隐私保护。混合云则结合了本地计算和云端计算的优势，实现了资源的灵活调配和高效利用。
+
+\section{结论}
+综上所述，Thin-Edge AI 不仅是一种创新的 AI 部署模式，更是一种符合未来发展趋势的技术理念。它通过将智能手机等消费电子设备作为边缘节点，实现了高效的数据处理和智能决策，为各种应用场景提供了强大的技术支持。随着技术的不断进步和应用场景的不断拓展，Thin-Edge AI 必将在未来的智能设备领域发挥越来越重要的作用。
+
+\CJKfamily{gkai} % Ensure CJK font is active for bibliography
+\printbibliography
+\end{CJK*} % End CJK environment
+\end{document}

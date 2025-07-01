@@ -1,0 +1,44 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{mediatek_whitepaper}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=e8cb549803a6d711478d0174a2aa1ea0}{%
+           family={联发科},
+           familyi={联\bibinitperiod}}}%
+      }
+      \strng{namehash}{e8cb549803a6d711478d0174a2aa1ea0}
+      \strng{fullhash}{e8cb549803a6d711478d0174a2aa1ea0}
+      \strng{bibnamehash}{e8cb549803a6d711478d0174a2aa1ea0}
+      \strng{authorbibnamehash}{e8cb549803a6d711478d0174a2aa1ea0}
+      \strng{authornamehash}{e8cb549803a6d711478d0174a2aa1ea0}
+      \strng{authorfullhash}{e8cb549803a6d711478d0174a2aa1ea0}
+      \field{sortinit}{联}
+      \field{sortinithash}{66a2c6c62bce09c7e844d21247d3480d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{White Paper}
+      \field{title}{联发科白皮书}
+      \field{year}{Unknown}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
